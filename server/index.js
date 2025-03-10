@@ -7,8 +7,8 @@ const app = express();
 
 const PORT = process.env.PORT || 3000;
 
-console.log(mongoose.connection.readyState);
-console.log(mongoose.version);
+// console.log(mongoose.connection.readyState);
+// console.log(mongoose.version);
 
 
 app.listen(PORT, () => {
