@@ -2,6 +2,12 @@ import { useState } from "react";
 import { Oval } from "react-loader-spinner";
 import { Link, useNavigate } from "react-router-dom";
 import { Bounce, toast } from "react-toastify";
+import { useDispatch, useSelector } from "react-redux";
+import {
+  sigInStart,
+  sigInSuccess,
+  signInFailure,
+} from "../redux/user/userSlice";
 
 const Signin = () => {
   const [formData, setFormData] = useState({
@@ -9,10 +15,9 @@ const Signin = () => {
     password: "",
   });
 
-  const [error, setError] = useState(null);
-  const [loading, setLoading] = useState(false);
-
+  const { loading } = useSelector((state) => state.user);
   const navigate = useNavigate();
+  const dispatch = useDispatch();
 
   const handleChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
@@ -20,8 +25,7 @@ const Signin = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    setLoading(true);
-    setError(null); // Clear any previous errors
+    dispatch(sigInStart());
 
     try {
       const res = await fetch("/api/auth/signin", {
@@ -45,6 +49,7 @@ const Signin = () => {
 
       // Handle API-level errors
       if (data.success === false) {
+        dispatch(signInFailure(data.message));
         throw new Error(data.message || "Registration failed");
       }
 
@@ -61,11 +66,11 @@ const Signin = () => {
         transition: Bounce,
       });
 
-      setLoading(false);
+      dispatch(sigInSuccess(data));
       navigate("/");
     } catch (error) {
       // Handle all errors in one place
-      setError(error.message);
+      dispatch(signInFailure(error.message));
       toast.error(error.message, {
         position: "top-center",
         autoClose: 1000,
@@ -82,8 +87,6 @@ const Signin = () => {
       console.error("Signup error:", error);
 
       return null; // Indicate error to caller
-    } finally {
-      setLoading(false);
     }
   };
 
