@@ -5,6 +5,7 @@ import SignUp from "./pages/SignUp";
 import About from "./pages/about";
 import Profile from "./pages/Profile";
 import Header from "./components/Header";
+import { ToastContainer } from "react-toastify";
 
 function App() {
   return (
@@ -18,6 +19,7 @@ function App() {
           <Route path="/about" element={<About />} />
           <Route path="/profile" element={<Profile />} />
         </Routes>
+        <ToastContainer />
       </Router>
     </>
   );
