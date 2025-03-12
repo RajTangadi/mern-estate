@@ -6,6 +6,7 @@ import About from "./pages/about";
 import Profile from "./pages/Profile";
 import Header from "./components/Header";
 import { ToastContainer } from "react-toastify";
+import ProtectedRoute from "./components/ProtectedRoute";
 
 function App() {
   return (
@@ -17,7 +18,9 @@ function App() {
           <Route path="/sign-in" element={<Signin />} />
           <Route path="/sign-up" element={<SignUp />} />
           <Route path="/about" element={<About />} />
-          <Route path="/profile" element={<Profile />} />
+          <Route element={<ProtectedRoute />}>
+            <Route path="/profile" element={<Profile />} />
+          </Route>
         </Routes>
         <ToastContainer />
       </Router>
