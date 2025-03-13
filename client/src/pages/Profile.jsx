@@ -7,6 +7,9 @@ import {
   deleteUserStart,
   deleteUserSuccess,
   deleteUserFailure,
+  signOutUserStart,
+  signOutUserSuccess,
+  signOutUserFailure
 } from "../redux/user/userSlice";
 import { useDispatch } from "react-redux";
 // import axios from 'axios';
@@ -62,7 +65,7 @@ const Profile = () => {
     }
   };
 
-  const handleDeleteUser = async (e) => {
+  const handleDeleteUser = async () => {
     try {
       dispatch(deleteUserStart());
       const res = await fetch(`/api/user/delete/${currentUser._id}`, {
@@ -82,12 +85,42 @@ const Profile = () => {
         position: "top-center",
         autoClose: 1000,
       });
-      setTimeout(() => {
-        window.location.replace("/");
-      }, 1000);
+      // setTimeout(() => {
+      //   window.location.replace("/");
+      // }, 1000);
     } catch (error) {
       dispatch(deleteUserFailure(error.message || "Error deleting user"));
       toast.error(error.message || "Error deleting user", {
+        position: "top-center",
+        autoClose: 1000,
+      });
+    }
+  };
+
+  const handleSignOut = async () => {
+    try {
+      dispatch(signOutUserStart());
+      const res = await fetch("/api/auth/signout");
+      const data = await res.json();
+      if (data.success === false) {
+        dispatch(signOutUserFailure(data.message));
+        toast.error(data.message, {
+          position: "top-center",
+          autoClose: 1000,
+        });
+        return;
+      }
+      toast.success("Signed out successfully", {
+        position: "top-center",
+        autoClose: 1000,
+      });
+      dispatch(signOutUserSuccess());
+      // setTimeout(() => {
+      //   window.location.replace("/");
+      // }, 1000);
+    } catch (error) {
+      dispatch(signOutUserFailure(error.message || "Error signing out"));
+      toast.error(error.message || "Error signing out", {
         position: "top-center",
         autoClose: 1000,
       });
@@ -246,7 +279,7 @@ const Profile = () => {
         >
           Delete Account
         </span>
-        <span className="text-red-700 cursor-pointer">Sign Out</span>
+        <span onClick={handleSignOut} className="text-red-700 cursor-pointer">Sign Out</span>
       </div>
     </div>
   );
