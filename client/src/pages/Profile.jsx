@@ -1,8 +1,14 @@
 import { useSelector } from "react-redux";
-import { useEffect, useRef, useState } from "react";
-import axios from 'axios';
-import { toast } from 'react-toastify';
-
+import { useRef, useState } from "react";
+import {
+  updateUserStart,
+  updateUserSuccess,
+  updateFailure,
+} from "../redux/user/userSlice";
+import { useDispatch } from "react-redux";
+// import axios from 'axios';
+import { toast } from "react-toastify";
+import { Oval } from "react-loader-spinner";
 
 const Profile = () => {
   const fileRef = useRef(null);
@@ -10,8 +16,48 @@ const Profile = () => {
   // const [filePerc, setFilePerc] = useState(0);
   // const [fileUploadError, setFileUploadError] = useState(false);
   // const [fileUploading, setFileUploading] = useState(false);
-  const { currentUser } = useSelector((state) => state.user);
+  const { currentUser, loading } = useSelector((state) => state.user);
+  const [formData, setFormData] = useState({});
 
+  const dispatch = useDispatch();
+
+  const handleChange = (e) => {
+    setFormData((prev) => ({ ...prev, [e.target.name]: e.target.value }));
+  };
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    try {
+      dispatch(updateUserStart());
+      console.log("fetching");
+
+      const res = await fetch(`/api/user/update/${currentUser._id}`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        credentials: "include",
+        body: JSON.stringify(formData),
+      });
+      const data = await res.json();
+      console.log(data);
+      if (data.success === false) {
+        dispatch(updateFailure(data.message));
+        return;
+      }
+      dispatch(updateUserSuccess(data));
+      toast.success("Profile updated successfully", {
+        position: "top-center",
+        autoClose: 1000,
+      });
+    } catch (error) {
+      dispatch(updateFailure(error.message || "Error updating user"));
+      toast.error(error.message || "Error updating user", {
+        position: "top-center",
+        autoClose: 1000,
+      });
+    }
+  };
 
   // useEffect(() => {
   //   if (file) {
@@ -19,7 +65,6 @@ const Profile = () => {
   //   }
   // }, [file]);
 
-  
   // const handleFileUpload = async (file) => {
   //   // Reset states
   //   setFileUploadError(false);
@@ -56,7 +101,6 @@ const Profile = () => {
   //       },
   //     });
 
-      
   //     // Show success message
   //     toast.success('Profile picture updated successfully', {
   //       position: "top-center",
@@ -78,7 +122,6 @@ const Profile = () => {
 
   // }
 
-
   // const handleFileUpload = async (file) => {
   //   const formData = new FormData();
   //   formData.append("file", file);
@@ -97,15 +140,19 @@ const Profile = () => {
   return (
     <div className="p-3 max-w-lg mx-auto">
       <h1 className="text-3xl font-semibold text-center my-7">Profile</h1>
-      <form className="flex flex-col gap-5">
-        <input type="file"
-        onChange={(e) => setFile(e.target.files[0])}
-         ref={fileRef} accept="image/*" hidden />
+      <form onSubmit={handleSubmit} className="flex flex-col gap-5">
+        <input
+          type="file"
+          onChange={(e) => setFile(e.target.files[0])}
+          ref={fileRef}
+          accept="image/*"
+          hidden
+        />
         <img
           src={`${currentUser.avatar}`}
           onClick={() => fileRef.current.click()}
           alt="profile"
-          className="rounded-full h-24 w-24 object-cover cursor-pointer self-center mt-2"
+          className="rounded-full h-24 w-24 object-cover cursor-pointer self-center mt-2 mb-5"
         />
         {/* {fileUploading && (
           <div className="absolute inset-0 flex items-center justify-center bg-black bg-opacity-50 rounded-full">
@@ -122,21 +169,39 @@ const Profile = () => {
           placeholder="username"
           name="username"
           className=" border-gray-500/50  p-3 rounded-lg bg-white focus:outline-none focus:border-transparent"
+          defaultValue={currentUser.username}
+          onChange={handleChange}
         />
         <input
           type="email"
           placeholder="email"
           name="email"
           className=" border-gray-500/50 p-3 rounded-lg bg-white focus:outline-none focus:border-transparent"
+          defaultValue={currentUser.email}
+          onChange={handleChange}
         />
         <input
           type="password"
           placeholder="password"
           name="password"
           className=" border-gray-500/50 p-3 rounded-lg bg-white focus:outline-none focus:border-transparent"
+          onChange={handleChange}
         />
-        <button className="bg-slate-700 text-white p-3 rounded-lg uppercase hover:opacity-95 disabled:opacity-80">
-          Update
+        <button className="bg-slate-700 text-white p-3 rounded-lg uppercase hover:opacity-95 disabled:opacity-80 cursor-pointer">
+          {loading ? (
+            <Oval
+              visible={true}
+              height="30"
+              width="30"
+              color="#fff"
+              strokeWidth={5}
+              ariaLabel="oval-loading"
+              wrapperStyle={{ display: "flex", justifyContent: "center" }}
+              wrapperClass=""
+            />
+          ) : (
+            "Update"
+          )}
         </button>
       </form>
       <div className="flex justify-between mt-5">

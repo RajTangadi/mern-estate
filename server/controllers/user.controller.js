@@ -2,15 +2,12 @@ import bcryptjs from "bcryptjs";
 import User from "../models/user.model.js";
 import { errorHandler } from "../utils/error.js";
 
-export const test = (req, res) => {
-  res.send("hello world");
-};
-
 export const updateUser = async (req, res, next) => {
-  console.log(req.params.id);
-  console.log(req.user.id);
+  // console.log(req.params.id);
+  // console.log(req.user.id);
+
   if (req.user.id !== req.params.id) {
-    return next(errorHandler(401, "You can only update your own account!"));
+     next(errorHandler(401, "You can only update your own account!"));
   }
   try {
     if (req.body.password) {
@@ -30,7 +27,7 @@ export const updateUser = async (req, res, next) => {
     );
 
     const { password, ...rest } = updatedUser._doc;
-    res.status(200).json(rest);
+    return res.status(200).json(rest);
   } catch (error) {
     next(error);
   }
