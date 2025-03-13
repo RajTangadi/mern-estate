@@ -4,6 +4,7 @@ import cookieParser from "cookie-parser";
 import { connectDB } from "./libs/connectDB.js";
 import userRouter from "./routes/user.route.js";
 import authRouter from "./routes/auth.router.js";
+import listingRouter from "./routes/listing.route.js";
 import { v2 as cloudinary } from "cloudinary";
 
 import uploadRoutes from "./routes/uploadRoutes.js";
@@ -23,6 +24,7 @@ app.use(cookieParser());
 //middleware
 app.use("/api/user", userRouter);
 app.use("/api/auth", authRouter);
+app.use("/api/listing", listingRouter);
 // app.use('/api/user', uploadRoutes);
 
 app.use((err, req, res, next) => {
