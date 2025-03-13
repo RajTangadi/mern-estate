@@ -4,6 +4,9 @@ import {
   updateUserStart,
   updateUserSuccess,
   updateFailure,
+  deleteUserStart,
+  deleteUserSuccess,
+  deleteUserFailure,
 } from "../redux/user/userSlice";
 import { useDispatch } from "react-redux";
 // import axios from 'axios';
@@ -53,6 +56,38 @@ const Profile = () => {
     } catch (error) {
       dispatch(updateFailure(error.message || "Error updating user"));
       toast.error(error.message || "Error updating user", {
+        position: "top-center",
+        autoClose: 1000,
+      });
+    }
+  };
+
+  const handleDeleteUser = async (e) => {
+    try {
+      dispatch(deleteUserStart());
+      const res = await fetch(`/api/user/delete/${currentUser._id}`, {
+        method: "DELETE",
+      });
+      const data = await res.json();
+      if (data.success === false) {
+        dispatch(deleteUserFailure(data.message));
+        toast.error(data.message, {
+          position: "top-center",
+          autoClose: 1000,
+        });
+        return;
+      }
+      dispatch(deleteUserSuccess(data));
+      toast.success("User deleted successfully", {
+        position: "top-center",
+        autoClose: 1000,
+      });
+      setTimeout(() => {
+        window.location.replace("/");
+      }, 1000);
+    } catch (error) {
+      dispatch(deleteUserFailure(error.message || "Error deleting user"));
+      toast.error(error.message || "Error deleting user", {
         position: "top-center",
         autoClose: 1000,
       });
@@ -205,7 +240,12 @@ const Profile = () => {
         </button>
       </form>
       <div className="flex justify-between mt-5">
-        <span className="text-red-700 cursor-pointer">Delete Account</span>
+        <span
+          onClick={handleDeleteUser}
+          className="text-red-700 cursor-pointer"
+        >
+          Delete Account
+        </span>
         <span className="text-red-700 cursor-pointer">Sign Out</span>
       </div>
     </div>
