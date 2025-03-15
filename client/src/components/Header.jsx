@@ -4,7 +4,7 @@ import { useSelector } from "react-redux";
 
 const Header = () => {
   const { currentUser } = useSelector((state) => state.user);
-// console.log(currentUser.avatar);
+  // console.log(currentUser.avatar);
   return (
     <header className="bg-slate-200 shadow-md">
       <div className="flex justify-between items-center max-w-6xl mx-auto p-3">
@@ -36,7 +36,7 @@ const Header = () => {
           <Link to="/profile">
             {currentUser ? (
               <img
-                src={`${currentUser.avatar}`}
+                src={currentUser.avatar}
                 alt="profile"
                 className="rounded-full h-7 w-7 object-cover"
               />
