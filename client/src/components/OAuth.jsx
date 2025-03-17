@@ -37,7 +37,7 @@ const OAuth = () => {
   return (
     <button
       onClick={handleGoogleClick}
-      type="button"
+      type="button" // we don't want to submit overall form that's the reason
       className="bg-red-700 text-white p-3 rounded-lg uppercase hover:opacity-90 cursor-pointer"
     >
       Continue with google

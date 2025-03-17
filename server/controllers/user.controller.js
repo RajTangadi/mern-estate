@@ -3,12 +3,12 @@ import User from "../models/user.model.js";
 import { errorHandler } from "../utils/error.js";
 
 export const updateUser = async (req, res, next) => {
-  // console.log(req.params.id);
-  // console.log(req.user.id);
-
-  if (req.user.id !== req.params.id) {
-    next(errorHandler(401, "You can only update your own account!"));
+  console.log("Received FormData:", req.body);
+  console.log("req.file:", req.file); // Log file upload
+  if (!req.user || req.user.id !== req.params.id) {
+    return next(errorHandler(401, "You can only update your own account!"));
   }
+
   try {
     if (req.body.password) {
       req.body.password = bcryptjs.hashSync(req.body.password, 10);
@@ -20,11 +20,17 @@ export const updateUser = async (req, res, next) => {
           username: req.body.username,
           email: req.body.email,
           password: req.body.password,
-          avatar: req.body.avatar, //photo
+          avatar: req.file?.path, //photo
         },
       },
       { new: true }
     );
+
+    if (!updatedUser) {
+      return next(errorHandler(404, "User not found"));
+    }
+
+    console.log("succefully updated", updatedUser);
 
     const { password, ...rest } = updatedUser._doc;
     return res.status(200).json(rest);
@@ -45,5 +51,3 @@ export const deleteUser = async (req, res, next) => {
     next(error);
   }
 };
-
-
