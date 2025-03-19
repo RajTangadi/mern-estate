@@ -7,7 +7,6 @@ import authRouter from "./routes/auth.router.js";
 import listingRouter from "./routes/listing.route.js";
 import { v2 as cloudinary } from "cloudinary";
 import cors from "cors";
-
 // import uploadRoutes from "./routes/uploadRoutes.js";
 
 dotenv.config();
@@ -48,5 +47,6 @@ cloudinary.config({
 
 app.listen(PORT, () => {
   connectDB();
+  // mongoose.disconnect();
   console.log(`Server is running on port ${PORT}`);
 });
