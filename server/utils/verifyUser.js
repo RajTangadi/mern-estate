@@ -12,7 +12,7 @@ export const verifyToken = (req, res, next) => {
     if (err) {
       return next(errorHandler(403, "Token is not valid!")); // Forbidden
     }
-    console.log("Authenticated user:", user);
+    // console.log("Authenticated user:", user);
     req.user = user;
     next();
   });

@@ -8,6 +8,8 @@ import Header from "./components/Header";
 import { ToastContainer } from "react-toastify";
 import ProtectedRoute from "./components/ProtectedRoute";
 import CreateListing from "./pages/CreateListing";
+// import Listing from "../../server/models/listing.model";
+import Listing from "./pages/Listing";
 
 function App() {
   return (
@@ -19,6 +21,7 @@ function App() {
           <Route path="/sign-in" element={<Signin />} />
           <Route path="/sign-up" element={<SignUp />} />
           <Route path="/about" element={<About />} />
+          <Route path="/listing/:listingId" element={<Listing />} />
           <Route element={<ProtectedRoute />}>
             <Route path="/profile" element={<Profile />} />
             <Route path="/create-listing" element={<CreateListing />} />

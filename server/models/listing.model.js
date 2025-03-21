@@ -40,7 +40,7 @@ const listingSchema = new Schema(
     },
     offer: {
       type: Boolean,
-      required: true,
+      // required: true,
     },
     imageUrls: {
       type: Array,

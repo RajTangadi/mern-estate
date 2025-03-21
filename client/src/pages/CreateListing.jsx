@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { Oval } from "react-loader-spinner";
 import { useSelector } from "react-redux";
+import { useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
 
 const CreateListing = () => {
@@ -13,19 +14,20 @@ const CreateListing = () => {
     bedrooms: 1,
     bathrooms: 1,
     regularPrice: 50,
-    discountPrice: 50,
-    offer: false,
+    discountPrice: 0,
     parking: false,
     furnished: false,
     address: "",
   });
 
-  console.log(formData);
+  // console.log(formData);
 
   const [imageUploadError, setImageUploadError] = useState(false);
   const [error, setError] = useState(false);
   const [loading, setLoading] = useState(false);
+  const [uploading, setUploading] = useState(false);
   const { currentUser } = useSelector((state) => state.user);
+  const navigate = useNavigate();
 
   const handleChange = (e) => {
     if (e.target.id === "sale" || e.target.id === "rent") {
@@ -60,10 +62,14 @@ const CreateListing = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    // setUploading(true);
     // console.log(formData);
     try {
       if (formData.imageUrls.length < 1) {
         return setError("Please upload atleast one image");
+      }
+      if (+formData.regularPrice < +formData.discountPrice) {
+        return setError("Discount price cannot be greater than regular price");
       }
       setLoading(true);
       setError(false);
@@ -77,6 +83,7 @@ const CreateListing = () => {
 
       const data = await res.json();
       setLoading(false);
+      console.log("data1: ", data);
       if (data.success === false) {
         setError(data.message);
         return;
@@ -99,6 +106,7 @@ const CreateListing = () => {
         furnished: false,
         address: "",
       });
+      navigate(`/listing/${data.listing._id}`);
     } catch (error) {
       setError(error.message);
       toast.error("Something went wrong", {
@@ -110,34 +118,29 @@ const CreateListing = () => {
   };
 
   const handleImageSubmit = async () => {
-    if (files.length === 0) {
-      setImageUploadError("Please select at least one image.");
-      return;
-    }
-    if (files.length + formData.imageUrls.length > 6) {
-      setImageUploadError("You can only upload up to 6 images.");
-      return;
-    }
+    if (files.length > 0 && files.length + formData.imageUrls.length < 5) {
+      setUploading(true);
+      setImageUploadError(false);
+      const fileArray = Array.from(files);
 
-    setImageUploadError(false);
-    // Ensure files is an array before mapping
-    // const fileArray = Array.isArray(files) ? files : Array.from(files);
-    const fileArray = Array.from(files);
-
-    // const promises = fileArray.map((file) => storeImage(file));
-
-    try {
-      // const urls = await Promise.all(promises);
-      console.log("Uploading images...");
-      const urls = await Promise.all(fileArray.map(storeImage));
-      console.log("Uploaded URLs:", urls); // Debugging
-      setFormData((prevData) => ({
-        ...prevData,
-        imageUrls: [...prevData.imageUrls, ...urls],
-      }));
-      setFiles([]);
-    } catch (error) {
-      setImageUploadError("Image upload failed (2 MB max per image).");
+      try {
+        // console.log("Uploading images...");
+        const urls = await Promise.all(fileArray.map(storeImage));
+        console.log("Uploaded URLs:", urls); // Debugging
+        setFormData((prevData) => ({
+          ...prevData,
+          imageUrls: [...prevData.imageUrls, ...urls],
+        }));
+        setFiles([]);
+        setImageUploadError(false);
+        setUploading(false);
+      } catch (error) {
+        setImageUploadError("Image upload failed (2 MB max per image).");
+        setUploading(false);
+      }
+    } else {
+      setImageUploadError("You can only upload 4 images per listing");
+      setUploading(false);
     }
   };
 
@@ -155,7 +158,7 @@ const CreateListing = () => {
       })
         .then((res) => res.json())
         .then((data) => {
-          console.log("Cloudinary Response:", data); // Debugging
+          // console.log("Cloudinary Response:", data); // Debugging
           if (data.secure_url) {
             resolve(data.secure_url);
           } else {
@@ -191,8 +194,8 @@ const CreateListing = () => {
             placeholder="Name"
             className="border p-3 rounded-lg bg-white focus:outline-none border-transparent"
             id="name"
-            maxLength="62"
-            minLength="10"
+            maxLength="50"
+            minLength="6"
             onChange={handleChange}
             value={formData.name}
             required
@@ -312,22 +315,24 @@ const CreateListing = () => {
                 <span className="text-xs">($/ Month)</span>
               </div>
             </div>
-            <div className="flex items-center gap-4">
-              <input
-                type="number"
-                id="discountPrice"
-                min="50"
-                max="1000000"
-                required
-                onChange={handleChange}
-                value={formData.discountPrice}
-                className="p-3 border-gray-300 rounded-lg bg-white focus:outline-none "
-              />
-              <div className="flex flex-col items-center">
-                <p>Discounted price </p>
-                <span>($/ Month)</span>
+            {formData.offer && (
+              <div className="flex items-center gap-4">
+                <input
+                  type="number"
+                  id="discountPrice"
+                  min="0"
+                  max="1000000"
+                  required
+                  onChange={handleChange}
+                  value={formData.discountPrice}
+                  className="p-3 border-gray-300 rounded-lg bg-white focus:outline-none "
+                />
+                <div className="flex flex-col items-center">
+                  <p>Discounted price </p>
+                  <span>($/ Month)</span>
+                </div>
               </div>
-            </div>
+            )}
           </div>
         </div>
 
@@ -335,7 +340,7 @@ const CreateListing = () => {
           <p className="font-semibold">
             Images:
             <span className="font-normal text-gray-600 ml-2">
-              The first image will be the cover (max 6)
+              The first image will be the cover (max 5)
             </span>
           </p>
           <div className="flex gap-4">
@@ -351,9 +356,10 @@ const CreateListing = () => {
             <button
               type="button"
               onClick={handleImageSubmit}
-              className="p-3 border text-green-700 border-green-700 rounded uppercase hover:shadow-lg disabled:opacity-80"
+              disabled={uploading}
+              className="p-3 border text-green-700 border-green-700 rounded uppercase hover:shadow-lg disabled:opacity-80 cursor-pointer"
             >
-              Upload
+              {uploading ? "Uploading..." : "Upload"}
             </button>
           </div>
           <p className="text-red-700 text-sm">
@@ -361,10 +367,7 @@ const CreateListing = () => {
           </p>
           {formData.imageUrls.length > 0 &&
             formData.imageUrls.map((url) => (
-              <div
-                key={url}
-                className="flex justify-between p-3 items-center"
-              >
+              <div key={url} className="flex justify-between p-3 items-center">
                 <img
                   src={url}
                   alt="listing cover"
@@ -379,7 +382,10 @@ const CreateListing = () => {
                 </button>
               </div>
             ))}
-          <button className="p-3 bg-slate-700 text-white rounded-lg uppercase hover:opacity-95 disabled:opacity-80 cursor-pointer">
+          <button
+            disabled={loading || uploading}
+            className="p-3 bg-slate-700 text-white rounded-lg uppercase hover:opacity-95 disabled:opacity-80 cursor-pointer"
+          >
             {loading ? (
               <Oval
                 visible={true}
