@@ -1,10 +1,10 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Oval } from "react-loader-spinner";
 import { useSelector } from "react-redux";
-import { useNavigate } from "react-router-dom";
-import { Slide, toast } from "react-toastify";
+import { useNavigate, useParams } from "react-router-dom";
+import {  toast } from "react-toastify";
 
-const CreateListing = () => {
+const UpdateListing = () => {
   const [files, setFiles] = useState([]);
   const [formData, setFormData] = useState({
     imageUrls: [],
@@ -21,14 +21,30 @@ const CreateListing = () => {
     address: "",
   });
 
-  // console.log(formData);
-
   const [imageUploadError, setImageUploadError] = useState(false);
   const [error, setError] = useState(false);
   const [loading, setLoading] = useState(false);
   const [uploading, setUploading] = useState(false);
   const { currentUser } = useSelector((state) => state.user);
   const navigate = useNavigate();
+  const params = useParams();
+
+  useEffect(() => {
+    const fetchListing = async () => {
+      const listingId = params.id;
+      console.log("listingId: ", params);
+      const res = await fetch(`/api/listing/get/${listingId}`);
+      const data = await res.json();
+      if (data.success === false) {
+        console.log(data.message);
+        setError(true);
+        return;
+      }
+      setFormData(data);
+    };
+
+    fetchListing();
+  }, []);
 
   const handleChange = (e) => {
     if (e.target.id === "sale" || e.target.id === "rent") {
@@ -63,71 +79,55 @@ const CreateListing = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    // setUploading(true);
-    // console.log(formData);
+
+    if (!currentUser || !currentUser._id) {
+      setError("User not authenticated");
+      toast.error("User not authenticated");
+      return;
+    }
+
+    if (!params.id) {
+      setError("Invalid listing ID");
+      toast.error("Invalid listing ID");
+      return;
+    }
+
+    if (formData.imageUrls.length < 1) {
+      setError("Please upload at least one image");
+      toast.error("Please upload at least one image");
+      return;
+    }
+
+    if (+formData.regularPrice < +formData.discountPrice) {
+      setError("Discount price cannot be greater than regular price");
+      toast.error("Discount price cannot be greater than regular price");
+      return;
+    }
+
+    setLoading(true);
+    setError(false);
+
     try {
-      if (formData.imageUrls.length < 1) {
-        return setError("Please upload atleast one image");
-      }
-      if (+formData.regularPrice < +formData.discountPrice) {
-        return setError("Discount price cannot be greater than regular price");
-      }
-      setLoading(true);
-      setError(false);
-      const res = await fetch("/api/listing/create", {
+      const res = await fetch(`/api/listing/update/${params.id}`, {
         method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
+        headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ ...formData, userRef: currentUser._id }),
       });
 
       const data = await res.json();
       setLoading(false);
-      console.log("data1: ", data);
+
       if (data.success === false) {
         setError(data.message);
+        toast.error(data.message);
         return;
       }
-      toast.success("Listing created successfully", {
-        position: "top-center",
-        autoClose: 1000,
-        hideProgressBar: true,
-        closeOnClick: false,
-        pauseOnHover: false,
-        draggable: true,
-        progress: undefined,
-        theme: "light",
-        transition: Slide,
-      });
-      setFormData({
-        imageUrls: [],
-        name: "",
-        description: "",
-        type: "rent",
-        bedrooms: 1,
-        bathrooms: 1,
-        regularPrice: 50,
-        discountPrice: 50,
-        offer: false,
-        parking: false,
-        furnished: false,
-        address: "",
-      });
+
+      toast.success("Listing updated successfully");
       navigate(`/listing/${data.listing._id}`);
     } catch (error) {
       setError(error.message);
-      toast.error("Something went wrong", {
-        position: "top-center",
-        autoClose: 1000,
-        hideProgressBar: true,
-        closeOnClick: false,
-        pauseOnHover: false,
-        draggable: true,
-        progress: undefined,
-        theme: "light",
-        transition: Slide,
-      });
+      toast.error("Something went wrong");
       setLoading(false);
     }
   };
@@ -197,7 +197,7 @@ const CreateListing = () => {
   return (
     <main className="p-3 max-w-4xl mx-auto">
       <h1 className="text-3xl font-semibold text-center my-7">
-        Create a Listing
+        Update a Listing
       </h1>
       <form
         className="flex flex-col sm:flex-row space-x-5"
@@ -413,7 +413,7 @@ const CreateListing = () => {
                 wrapperClass=""
               />
             ) : (
-              "Create Listing"
+              "Update Listing"
             )}
           </button>
           {error && <p className="text-red-500 text-sm mt-5">{error}</p>}
@@ -423,4 +423,4 @@ const CreateListing = () => {
   );
 };
 
-export default CreateListing;
+export default UpdateListing;

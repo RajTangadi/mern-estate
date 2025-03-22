@@ -12,7 +12,7 @@ import {
   signOutUserFailure,
   signOutUserSuccess,
 } from "../redux/user/userSlice";
-import { toast } from "react-toastify";
+import { Slide, toast } from "react-toastify";
 import { Oval } from "react-loader-spinner";
 
 const Profile = () => {
@@ -83,7 +83,17 @@ const Profile = () => {
       }
 
       dispatch(updateUserSuccess(data));
-      toast.success("Profile updated successfully");
+      toast.success("Profile updated successfully", {
+        position: "top-center",
+        autoClose: 1000,
+        hideProgressBar: true,
+        closeOnClick: false,
+        pauseOnHover: false,
+        draggable: true,
+        progress: undefined,
+        theme: "light",
+        transition: Slide,
+      });
     } catch (error) {
       dispatch(updateFailure(error.message || "Error updating user"));
       toast.error(error.message || "Error updating user");
@@ -102,6 +112,13 @@ const Profile = () => {
         toast.error(data.message, {
           position: "top-center",
           autoClose: 1000,
+          hideProgressBar: true,
+          closeOnClick: false,
+          pauseOnHover: false,
+          draggable: true,
+          progress: undefined,
+          theme: "light",
+          transition: Slide,
         });
         return;
       }
@@ -109,12 +126,26 @@ const Profile = () => {
       toast.success("User deleted successfully", {
         position: "top-center",
         autoClose: 1000,
+        hideProgressBar: true,
+        closeOnClick: false,
+        pauseOnHover: false,
+        draggable: true,
+        progress: undefined,
+        theme: "light",
+        transition: Slide,
       });
     } catch (error) {
       dispatch(deleteUserFailure(error.message || "Error deleting user"));
       toast.error(error.message || "Error deleting user", {
         position: "top-center",
         autoClose: 1000,
+        hideProgressBar: true,
+        closeOnClick: false,
+        pauseOnHover: false,
+        draggable: true,
+        progress: undefined,
+        theme: "light",
+        transition: Slide,
       });
     }
   };
@@ -129,6 +160,13 @@ const Profile = () => {
         toast.error(data.message, {
           position: "top-center",
           autoClose: 1000,
+          hideProgressBar: true,
+          closeOnClick: false,
+          pauseOnHover: false,
+          draggable: true,
+          progress: undefined,
+          theme: "light",
+          transition: Slide,
         });
         return;
       }
@@ -142,6 +180,13 @@ const Profile = () => {
       toast.error(error.message || "Error signing out", {
         position: "top-center",
         autoClose: 1000,
+        hideProgressBar: true,
+        closeOnClick: false,
+        pauseOnHover: false,
+        draggable: true,
+        progress: undefined,
+        theme: "light",
+        transition: Slide,
       });
     }
   };
@@ -159,6 +204,13 @@ const Profile = () => {
         toast.error("Error showing listings", {
           position: "top-center",
           autoClose: 1000,
+          hideProgressBar: true,
+          closeOnClick: false,
+          pauseOnHover: false,
+          draggable: true,
+          progress: undefined,
+          theme: "light",
+          transition: Slide,
         });
       }
       setUserListing(data);
@@ -167,6 +219,13 @@ const Profile = () => {
       toast.error("Error showing listings", {
         position: "top-center",
         autoClose: 1000,
+        hideProgressBar: true,
+        closeOnClick: false,
+        pauseOnHover: false,
+        draggable: true,
+        progress: undefined,
+        theme: "light",
+        transition: Slide,
       });
     }
   };
@@ -187,6 +246,13 @@ const Profile = () => {
       toast.success("Listing deleted successfully", {
         position: "top-center",
         autoClose: 1000,
+        hideProgressBar: true,
+        closeOnClick: false,
+        pauseOnHover: false,
+        draggable: true,
+        progress: undefined,
+        theme: "light",
+        transition: Slide,
       });
       setUserListing((prev) =>
         prev.filter((listing) => listing._id !== listingId)
@@ -195,6 +261,13 @@ const Profile = () => {
       toast.error("Error deleting listing", {
         position: "top-center",
         autoClose: 1000,
+        hideProgressBar: true,
+        closeOnClick: false,
+        pauseOnHover: false,
+        draggable: true,
+        progress: undefined,
+        theme: "light",
+        transition: Slide,
       });
     }
   };
@@ -317,9 +390,11 @@ const Profile = () => {
                 >
                   Delete
                 </button>
-                <button className="text-green-700 cursor-pointer uppercase">
-                  Edit
-                </button>
+                <Link to={`/update-listing/${listing._id}`}>
+                  <button className="text-green-700 cursor-pointer uppercase">
+                    Edit
+                  </button>
+                </Link>
               </div>
             </div>
           ))}

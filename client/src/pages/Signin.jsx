@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { Oval } from "react-loader-spinner";
 import { Link, useNavigate } from "react-router-dom";
-import { Bounce, toast } from "react-toastify";
+import {  Slide, toast } from "react-toastify";
 import { useDispatch, useSelector } from "react-redux";
 import {
   sigInStart,
@@ -58,13 +58,13 @@ const Signin = () => {
       toast.success("Registered Successfully", {
         position: "top-center",
         autoClose: 1000,
-        hideProgressBar: false,
+        hideProgressBar: true,
         closeOnClick: false,
-        pauseOnHover: true,
+        pauseOnHover: false,
         draggable: true,
         progress: undefined,
         theme: "light",
-        transition: Bounce,
+        transition: Slide,
       });
 
       dispatch(sigInSuccess(data));
@@ -75,13 +75,13 @@ const Signin = () => {
       toast.error(error.message, {
         position: "top-center",
         autoClose: 1000,
-        hideProgressBar: false,
+        hideProgressBar: true,
         closeOnClick: false,
-        pauseOnHover: true,
+        pauseOnHover: false,
         draggable: true,
         progress: undefined,
         theme: "light",
-        transition: Bounce,
+        transition: Slide,
       });
 
       // Optionally log error for debugging

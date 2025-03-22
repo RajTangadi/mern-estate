@@ -10,6 +10,7 @@ import ProtectedRoute from "./components/ProtectedRoute";
 import CreateListing from "./pages/CreateListing";
 // import Listing from "../../server/models/listing.model";
 import Listing from "./pages/Listing";
+import UpdateListing from "./pages/UpdateListing";
 
 function App() {
   return (
@@ -25,6 +26,7 @@ function App() {
           <Route element={<ProtectedRoute />}>
             <Route path="/profile" element={<Profile />} />
             <Route path="/create-listing" element={<CreateListing />} />
+            <Route path="/update-listing/:id" element={<UpdateListing />} />
           </Route>
         </Routes>
         <ToastContainer />
