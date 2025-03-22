@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import { Oval } from "react-loader-spinner";
 import { useSelector } from "react-redux";
 import { useNavigate, useParams } from "react-router-dom";
-import {  toast } from "react-toastify";
+import { toast } from "react-toastify";
 
 const UpdateListing = () => {
   const [files, setFiles] = useState([]);
@@ -327,7 +327,9 @@ const UpdateListing = () => {
 
               <div className="flex flex-col items-center">
                 <p>Regular price </p>
-                <span className="text-xs">($/ Month)</span>
+                {formData.type === "rent" && (
+                  <span className="text-xs">($ / month)</span>
+                )}
               </div>
             </div>
             {formData.offer && (
@@ -344,7 +346,9 @@ const UpdateListing = () => {
                 />
                 <div className="flex flex-col items-center">
                   <p>Discounted price </p>
-                  <span>($/ Month)</span>
+                  {formData.type === "rent" && (
+                    <span className="text-xs">($ / month)</span>
+                  )}
                 </div>
               </div>
             )}
