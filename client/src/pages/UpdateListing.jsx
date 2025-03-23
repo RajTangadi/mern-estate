@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import { Oval } from "react-loader-spinner";
 import { useSelector } from "react-redux";
 import { useNavigate, useParams } from "react-router-dom";
-import { toast } from "react-toastify";
+import { Slide, toast } from "react-toastify";
 
 const UpdateListing = () => {
   const [files, setFiles] = useState([]);
@@ -79,27 +79,34 @@ const UpdateListing = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-
+    setError(false);
     if (!currentUser || !currentUser._id) {
-      setError("User not authenticated");
       toast.error("User not authenticated");
       return;
     }
 
     if (!params.id) {
-      setError("Invalid listing ID");
       toast.error("Invalid listing ID");
       return;
     }
 
     if (formData.imageUrls.length < 1) {
       setError("Please upload at least one image");
-      toast.error("Please upload at least one image");
+      toast.error("Please upload at least one image", {
+        position: "top-center",
+        autoClose: 1000,
+        hideProgressBar: true,
+        closeOnClick: false,
+        pauseOnHover: false,
+        draggable: true,
+        progress: undefined,
+        theme: "light",
+        transition: Slide,
+      });
       return;
     }
 
     if (+formData.regularPrice < +formData.discountPrice) {
-      setError("Discount price cannot be greater than regular price");
       toast.error("Discount price cannot be greater than regular price");
       return;
     }
@@ -118,16 +125,34 @@ const UpdateListing = () => {
       setLoading(false);
 
       if (data.success === false) {
-        setError(data.message);
-        toast.error(data.message);
+        toast.error(data.message || "Failed to update listing");
         return;
       }
 
-      toast.success("Listing updated successfully");
-      navigate(`/listing/${data.listing._id}`);
+      toast.success("Listing updated successfully", {
+        position: "top-center",
+        autoClose: 1000,
+        hideProgressBar: true,
+        closeOnClick: false,
+        pauseOnHover: false,
+        draggable: true,
+        progress: undefined,
+        theme: "light",
+        transition: Slide,
+      });
+      navigate(`/listing/${data._id}`);
     } catch (error) {
-      setError(error.message);
-      toast.error("Something went wrong");
+      toast.error("Something went wrong", {
+        position: "top-center",
+        autoClose: 1000,
+        hideProgressBar: true,
+        closeOnClick: false,
+        pauseOnHover: false,
+        draggable: true,
+        progress: undefined,
+        theme: "light",
+        transition: Slide,
+      });
       setLoading(false);
     }
   };

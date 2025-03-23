@@ -21,7 +21,6 @@ const CreateListing = () => {
     address: "",
   });
 
-  // console.log(formData);
 
   const [imageUploadError, setImageUploadError] = useState(false);
   const [error, setError] = useState(false);
@@ -84,7 +83,6 @@ const CreateListing = () => {
 
       const data = await res.json();
       setLoading(false);
-      console.log("data1: ", data);
       if (data.success === false) {
         setError(data.message);
         return;
@@ -193,6 +191,7 @@ const CreateListing = () => {
       imageUrls: prevData.imageUrls.filter((imageUrl) => imageUrl !== url),
     }));
   };
+
 
   return (
     <main className="p-3 max-w-4xl mx-auto">
