@@ -11,6 +11,7 @@ import CreateListing from "./pages/CreateListing";
 // import Listing from "../../server/models/listing.model";
 import Listing from "./pages/Listing";
 import UpdateListing from "./pages/UpdateListing";
+import Search from "./pages/Search";
 
 function App() {
   return (
@@ -22,6 +23,7 @@ function App() {
           <Route path="/sign-in" element={<Signin />} />
           <Route path="/sign-up" element={<SignUp />} />
           <Route path="/about" element={<About />} />
+          <Route path="/search" element={<Search />} />
           <Route path="/listing/:id" element={<Listing />} />
           <Route element={<ProtectedRoute />}>
             <Route path="/profile" element={<Profile />} />
