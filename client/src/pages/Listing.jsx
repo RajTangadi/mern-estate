@@ -1,5 +1,4 @@
 import { useEffect, useState } from "react";
-import { Oval } from "react-loader-spinner";
 import { useParams } from "react-router-dom";
 import { Swiper, SwiperSlide } from "swiper/react";
 import { useSelector } from "react-redux";
@@ -49,20 +48,7 @@ const Listing = () => {
 
   return (
     <main>
-      {loading && (
-        <div className="text-center my-7 text-2xl">
-          <Oval
-            visible={true}
-            height="40"
-            width="40"
-            color="#fff"
-            strokeWidth={5}
-            ariaLabel="oval-loading"
-            wrapperStyle={{ display: "flex", justifyContent: "center" }}
-            wrapperClass=""
-          />
-        </div>
-      )}
+      {loading && <p className="text-center my-7 text-2xl">Loading...</p>}
       {error && <p className="text-center text-2xl">An error occurred</p>}
       {listing && !loading && !error && (
         <div>

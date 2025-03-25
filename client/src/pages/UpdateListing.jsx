@@ -1,5 +1,4 @@
 import { useEffect, useState } from "react";
-import { Oval } from "react-loader-spinner";
 import { useSelector } from "react-redux";
 import { useNavigate, useParams } from "react-router-dom";
 import { Slide, toast } from "react-toastify";
@@ -430,20 +429,7 @@ const UpdateListing = () => {
             disabled={loading || uploading}
             className="p-3 bg-slate-700 text-white rounded-lg uppercase hover:opacity-95 disabled:opacity-80 cursor-pointer"
           >
-            {loading ? (
-              <Oval
-                visible={true}
-                height="30"
-                width="30"
-                color="#fff"
-                strokeWidth={5}
-                ariaLabel="oval-loading"
-                wrapperStyle={{ display: "flex", justifyContent: "center" }}
-                wrapperClass=""
-              />
-            ) : (
-              "Update Listing"
-            )}
+            {loading ? "Updating..." : "Update listing"}
           </button>
           {error && <p className="text-red-500 text-sm mt-5">{error}</p>}
         </div>

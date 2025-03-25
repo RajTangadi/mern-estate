@@ -1,5 +1,4 @@
 import { useState } from "react";
-import { Oval } from "react-loader-spinner";
 import { Link, useNavigate } from "react-router-dom";
 import { Slide, toast } from "react-toastify";
 import OAuth from "../components/OAuth";
@@ -121,20 +120,7 @@ const SignUp = () => {
           disabled={loading}
           className="bg-slate-700 text-white p-3 cursor-pointer rounded-lg uppercase hover:opacity-95 disabled:opacity-80"
         >
-          {loading ? (
-            <Oval
-              visible={true}
-              height="30"
-              width="30"
-              color="#fff"
-              strokeWidth={5}
-              ariaLabel="oval-loading"
-              wrapperStyle={{ display: "flex", justifyContent: "center" }}
-              wrapperClass=""
-            />
-          ) : (
-            "Sign Up"
-          )}
+          {loading ? "Loading..." : "Sign Up"}
         </button>
         <OAuth />
       </form>

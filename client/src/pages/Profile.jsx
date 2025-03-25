@@ -13,7 +13,6 @@ import {
   signOutUserSuccess,
 } from "../redux/user/userSlice";
 import { Slide, toast } from "react-toastify";
-import { Oval } from "react-loader-spinner";
 
 const Profile = () => {
   const fileRef = useRef(null);
@@ -317,20 +316,7 @@ const Profile = () => {
           type="submit"
           className="bg-slate-700 text-white p-3 rounded-lg uppercase hover:opacity-95 disabled:opacity-80 cursor-pointer"
         >
-          {loading ? (
-            <Oval
-              visible={true}
-              height="30"
-              width="30"
-              color="#fff"
-              strokeWidth={5}
-              ariaLabel="oval-loading"
-              wrapperStyle={{ display: "flex", justifyContent: "center" }}
-              wrapperClass=""
-            />
-          ) : (
-            "Update"
-          )}
+          {loading ? "Loading..." : "Update"}
         </button>
         <Link
           to="/create-listing"

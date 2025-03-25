@@ -1,5 +1,4 @@
 import { useState } from "react";
-import { Oval } from "react-loader-spinner";
 import { useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import { Slide, toast } from "react-toastify";
@@ -20,7 +19,6 @@ const CreateListing = () => {
     offer: false,
     address: "",
   });
-
 
   const [imageUploadError, setImageUploadError] = useState(false);
   const [error, setError] = useState(false);
@@ -191,7 +189,6 @@ const CreateListing = () => {
       imageUrls: prevData.imageUrls.filter((imageUrl) => imageUrl !== url),
     }));
   };
-
 
   return (
     <main className="p-3 max-w-4xl mx-auto">
@@ -404,20 +401,7 @@ const CreateListing = () => {
             disabled={loading || uploading}
             className="p-3 bg-slate-700 text-white rounded-lg uppercase hover:opacity-95 disabled:opacity-80 cursor-pointer"
           >
-            {loading ? (
-              <Oval
-                visible={true}
-                height="30"
-                width="30"
-                color="#fff"
-                strokeWidth={5}
-                ariaLabel="oval-loading"
-                wrapperStyle={{ display: "flex", justifyContent: "center" }}
-                wrapperClass=""
-              />
-            ) : (
-              "Create Listing"
-            )}
+            {loading ? "Creating..." : "Create Listing"}
           </button>
           {error && <p className="text-red-500 text-sm mt-5">{error}</p>}
         </div>
